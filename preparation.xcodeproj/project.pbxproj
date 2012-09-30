@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2503729B15FAE7340068F9D5 /* FolderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2503729A15FAE7340068F9D5 /* FolderViewController.m */; };
+		25588AF816125EE300191CB5 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 25588AF716125EE300191CB5 /* FileViewController.m */; };
 		259D3F7A15F5A8B000D0D5C3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 259D3F7915F5A8AF00D0D5C3 /* UIKit.framework */; };
 		259D3F7C15F5A8B000D0D5C3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 259D3F7B15F5A8B000D0D5C3 /* Foundation.framework */; };
 		259D3F7E15F5A8B000D0D5C3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 259D3F7D15F5A8B000D0D5C3 /* CoreGraphics.framework */; };
@@ -20,6 +22,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2503729915FAE7340068F9D5 /* FolderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderViewController.h; sourceTree = "<group>"; };
+		2503729A15FAE7340068F9D5 /* FolderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderViewController.m; sourceTree = "<group>"; };
+		25588AF616125EE300191CB5 /* FileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileViewController.h; sourceTree = "<group>"; };
+		25588AF716125EE300191CB5 /* FileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileViewController.m; sourceTree = "<group>"; };
 		259D3F7515F5A8AF00D0D5C3 /* preparation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = preparation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		259D3F7915F5A8AF00D0D5C3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		259D3F7B15F5A8B000D0D5C3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -90,6 +96,10 @@
 				259D3F9215F5A8B000D0D5C3 /* MasterViewController.m */,
 				259D3F9415F5A8B000D0D5C3 /* DetailViewController.h */,
 				259D3F9515F5A8B000D0D5C3 /* DetailViewController.m */,
+				2503729915FAE7340068F9D5 /* FolderViewController.h */,
+				2503729A15FAE7340068F9D5 /* FolderViewController.m */,
+				25588AF616125EE300191CB5 /* FileViewController.h */,
+				25588AF716125EE300191CB5 /* FileViewController.m */,
 				259D3F8015F5A8B000D0D5C3 /* Supporting Files */,
 			);
 			path = preparation;
@@ -174,6 +184,8 @@
 				259D3F8A15F5A8B000D0D5C3 /* AppDelegate.m in Sources */,
 				259D3F9315F5A8B000D0D5C3 /* MasterViewController.m in Sources */,
 				259D3F9615F5A8B000D0D5C3 /* DetailViewController.m in Sources */,
+				2503729B15FAE7340068F9D5 /* FolderViewController.m in Sources */,
+				25588AF816125EE300191CB5 /* FileViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,6 +276,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "preparation/preparation-Prefix.pch";
 				INFOPLIST_FILE = "preparation/preparation-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -275,6 +288,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "preparation/preparation-Prefix.pch";
 				INFOPLIST_FILE = "preparation/preparation-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -299,6 +313,7 @@
 				259D3F9B15F5A8B000D0D5C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

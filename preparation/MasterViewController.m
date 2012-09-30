@@ -7,12 +7,19 @@
 //
 
 #import "MasterViewController.h"
-
 #import "DetailViewController.h"
+#import "FolderViewController.h"
+#import "FileViewController.h"
 
-@interface MasterViewController () {
-    NSMutableArray *_objects;
-}
+enum kType {
+    kTypePrefix = 0,
+    kTypeKey = 1,
+    kTypeDot = 2,
+};
+
+@interface MasterViewController ()
+@property (strong, nonatomic)NSDictionary *response;
+@property (strong, nonatomic)NSArray *objects;
 @end
 
 @implementation MasterViewController
@@ -26,15 +33,67 @@
     [super awakeFromNib];
 }
 
+- (NSUInteger)typeWithIndexPath:(NSIndexPath *)indexPath
+{
+    NSDictionary *object = [self.objects objectAtIndex:indexPath.row];
+    NSString *prefix = [object objectForKey:@"Prefix"];
+    NSString *key = [object objectForKey:@"Key"];
+    if (prefix) {
+        return kTypePrefix;
+    }
+    if ([key isEqualToString:self.prefix]){
+            return kTypeDot;
+    }
+    return kTypeKey;
+}
+
+- (IBAction)refresh:(id)sender {
+    NSURL *URL = [NSURL URLWithString:@"http://aws.warycat.com/prep/index.php"];
+    if (self.prefix) {
+        NSString *escapedPrefix = [self.prefix stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *parameter = [@"?prefix=" stringByAppendingString:escapedPrefix];
+        URL = [NSURL URLWithString:parameter relativeToURL:URL];
+    }
+    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+    NSLog(@"%@",request);
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        if (data) {
+            self.response = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        }
+        
+        NSMutableArray *array = [NSMutableArray array];
+        id contents = [self.response objectForKey:@"Contents"];
+        id commonPrefixes = [self.response objectForKey:@"CommonPrefixes"];
+        if ([commonPrefixes isKindOfClass:[NSArray class]]) {
+            [array addObjectsFromArray:commonPrefixes];
+        }
+        if ([commonPrefixes isKindOfClass:[NSDictionary class]]) {
+            [array addObject:commonPrefixes];
+        }
+        if ([contents isKindOfClass:[NSArray class]]) {
+            [array addObjectsFromArray:contents];
+        }
+        if ([contents isKindOfClass:[NSDictionary class]]) {
+            [array addObject:contents];
+        }
+        self.objects = [NSArray arrayWithArray:array];
+        [self.tableView reloadData];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        NSLog(@"%@",self.response);
+    }];
+}
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    self.navigationItem.leftBarButtonItem = self.editButtonItem;
-
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-    self.navigationItem.rightBarButtonItem = addButton;
-    self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    if (self.prefix) {
+        self.title = self.prefix;
+    }else{
+        self.prefix = @"";
+    }
+    [self refresh:nil];
 }
 
 - (void)viewDidUnload
@@ -52,15 +111,6 @@
     }
 }
 
-- (void)insertNewObject:(id)sender
-{
-    if (!_objects) {
-        _objects = [[NSMutableArray alloc] init];
-    }
-    [_objects insertObject:[NSDate date] atIndex:0];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
 
 #pragma mark - Table View
 
@@ -71,65 +121,80 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _objects.count;
+    return self.objects.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
-
-    NSDate *object = [_objects objectAtIndex:indexPath.row];
-    cell.textLabel.text = [object description];
+    NSDictionary *object = [self.objects objectAtIndex:indexPath.row];
+    NSUInteger type = [self typeWithIndexPath:indexPath];
+    switch (type) {
+        case kTypePrefix:
+        {
+            NSString *folder = [object objectForKey:@"Prefix"];
+            folder = [folder substringFromIndex:self.prefix.length];
+            cell.textLabel.text = folder;
+        }
+            break;
+        case kTypeDot:
+            cell.textLabel.text = @".";
+            break;
+        case kTypeKey:
+        {
+            NSString *key = [object objectForKey:@"Key"];
+            key = [key substringFromIndex:self.prefix.length];
+            cell.textLabel.text = key;
+        }
+            break;
+        default:
+            break;
+    }
     return cell;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
-    return YES;
+    return NO;
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [_objects removeObjectAtIndex:indexPath.row];
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-    }
-}
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        NSDate *object = [_objects objectAtIndex:indexPath.row];
-        self.detailViewController.detailItem = object;
+    id object = [self.objects objectAtIndex:indexPath.row];
+    NSUInteger type = [self typeWithIndexPath:indexPath];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:[NSBundle mainBundle]];    
+    switch (type) {
+        case kTypePrefix:
+        {
+            MasterViewController *mvc = [storyboard instantiateViewControllerWithIdentifier:@"MasterViewController"];
+            mvc.prefix = [object objectForKey:@"Prefix"];
+            [self.navigationController pushViewController:mvc animated:YES];
+        }
+            break;
+        case kTypeDot:
+        {
+            FolderViewController *fvc = [storyboard instantiateViewControllerWithIdentifier:@"FolderViewController"];
+            fvc.folder = object;
+            fvc.path = [object objectForKey:@"Key"];
+            [self.navigationController pushViewController:fvc animated:YES];
+        }
+            break;
+        case kTypeKey:
+        {
+            FileViewController *fvc = [storyboard instantiateViewControllerWithIdentifier:@"FileViewController"];
+            fvc.file = object;
+            fvc.path = self.prefix;
+            [self.navigationController pushViewController:fvc animated:YES];
+        }
+            break;
+        default:
+            break;
     }
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([[segue identifier] isEqualToString:@"showDetail"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSDate *object = [_objects objectAtIndex:indexPath.row];
-        [[segue destinationViewController] setDetailItem:object];
-    }
-}
+
+
 
 @end

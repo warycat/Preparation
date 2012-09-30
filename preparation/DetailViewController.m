@@ -9,6 +9,8 @@
 #import "DetailViewController.h"
 
 @interface DetailViewController ()
+@property (weak, nonatomic) IBOutlet UIWebView *webView;
+
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 - (void)configureView;
 @end
@@ -16,6 +18,7 @@
 @implementation DetailViewController
 
 #pragma mark - Managing the detail item
+@synthesize webView = _webView;
 
 - (void)setDetailItem:(id)newDetailItem
 {
@@ -33,11 +36,10 @@
 
 - (void)configureView
 {
-    // Update the user interface for the detail item.
-
-    if (self.detailItem) {
-        self.detailDescriptionLabel.text = [self.detailItem description];
-    }
+    self.webView.scalesPageToFit = YES;
+    self.webView.delegate = self;
+    self.navigationItem.title = @"Loading";
+    [self.webView loadData:self.detailItem MIMEType:self.contentType textEncodingName:nil baseURL:nil];
 }
 
 - (void)viewDidLoad
@@ -49,6 +51,7 @@
 
 - (void)viewDidUnload
 {
+    [self setWebView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
@@ -76,6 +79,26 @@
     // Called when the view is shown again in the split view, invalidating the button and popover controller.
     [self.navigationItem setLeftBarButtonItem:nil animated:YES];
     self.masterPopoverController = nil;
+}
+
+#pragma mark - Web view
+
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+    NSLog(@"webViewDidStartLoad");
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    NSLog(@"webViewDidFinishLoad");
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    self.title = @"Loaded";
+}
+
+- (IBAction)tap:(id)sender {
+    BOOL barHidden = self.navigationController.navigationBarHidden;
+        [self.navigationController setNavigationBarHidden:!barHidden animated:YES];
 }
 
 @end

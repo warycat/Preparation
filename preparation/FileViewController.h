@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "StoreKit/StoreKit.h"
 
-@interface FileViewController : UITableViewController<NSURLConnectionDataDelegate,UIAlertViewDelegate>
+@interface FileViewController : UITableViewController<NSURLConnectionDataDelegate,UIAlertViewDelegate,SKProductsRequestDelegate,SKPaymentTransactionObserver>
 @property (nonatomic, strong) NSDictionary *file;
 @property (nonatomic, strong) NSString *path;
 @end

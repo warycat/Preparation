@@ -36,9 +36,8 @@
 
 - (void)configureView
 {
-    self.webView.scalesPageToFit = YES;
-    self.webView.delegate = self;
-    self.navigationItem.title = @"Loading";
+    NSLog(@"configureView");
+
     [self.webView loadData:self.detailItem MIMEType:self.contentType textEncodingName:nil baseURL:nil];
 }
 
@@ -46,7 +45,16 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    [self configureView];
+    self.webView.scalesPageToFit = YES;
+    self.webView.delegate = self;
+    self.navigationItem.title = @"Loading";
+    if (self.detailItem) {
+        [self configureView];
+    }else{
+        NSURL *URL = [NSURL URLWithString:@"http://aws.warycat.com/prep/"];
+        NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+        [self.webView loadRequest:request];
+    }
 }
 
 - (void)viewDidUnload
@@ -69,7 +77,7 @@
 
 - (void)splitViewController:(UISplitViewController *)splitController willHideViewController:(UIViewController *)viewController withBarButtonItem:(UIBarButtonItem *)barButtonItem forPopoverController:(UIPopoverController *)popoverController
 {
-    barButtonItem.title = NSLocalizedString(@"Master", @"Master");
+    barButtonItem.title = NSLocalizedString(@"Preparation", @"Preparation");
     [self.navigationItem setLeftBarButtonItem:barButtonItem animated:YES];
     self.masterPopoverController = popoverController;
 }

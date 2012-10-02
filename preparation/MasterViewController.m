@@ -48,8 +48,8 @@ enum kType {
 }
 
 - (IBAction)refresh:(id)sender {
-    NSURL *URL = [NSURL URLWithString:@"http://aws.warycat.com/prep/index.php"];
-    if (self.prefix) {
+    NSURL *URL = [NSURL URLWithString:@"http://aws.warycat.com/prep/list.php"];
+    if (self.prefix && ![self.prefix isEqualToString:@""]) {
         NSString *escapedPrefix = [self.prefix stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSString *parameter = [@"?prefix=" stringByAppendingString:escapedPrefix];
         URL = [NSURL URLWithString:parameter relativeToURL:URL];
@@ -193,8 +193,6 @@ enum kType {
             break;
     }
 }
-
-
 
 
 @end

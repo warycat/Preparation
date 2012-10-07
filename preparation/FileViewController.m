@@ -292,9 +292,13 @@
     NSMutableDictionary *products = [NSMutableDictionary dictionary];
     for (SKProduct *product in response.products) {
         [products setObject:product forKey:product.productIdentifier];
+        NSLog(@"%@",product.productIdentifier);
     }
     self.products = [NSDictionary dictionaryWithDictionary:products];
     SKProduct *product = [self.products objectForKey:@"com.warycat.prep.delivery"];
+    if (!product) {
+        return;
+    }
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterCurrencyStyle];
     [formatter setLocale:product.priceLocale];

@@ -103,7 +103,13 @@
                             <outlet property="delegate" destination="19" id="21"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Preparation" id="40"/>
+                    <navigationItem key="navigationItem" title="Preparation" id="40">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="1V7-5h-48d">
+                            <connections>
+                                <action selector="refresh:" destination="19" id="Ky3-J5-4LS"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="searchDisplayController" destination="kef-9y-t90" id="8zf-Sm-P82"/>
                     </connections>
